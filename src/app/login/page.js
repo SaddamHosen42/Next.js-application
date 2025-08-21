@@ -196,12 +196,12 @@ export default function LoginPage() {
         <div className="text-center mt-6">
           <p className="text-sm text-gray-600">
             Don&apos;t have an account?{' '}
-            <button 
-              onClick={() => toast.info('Signup feature coming soon!')}
+            <Link 
+              href="/register"
               className="text-blue-600 hover:underline font-medium"
             >
               Sign up
-            </button>
+            </Link>
           </p>
           <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 mt-2 inline-block">
             ← Back to Home

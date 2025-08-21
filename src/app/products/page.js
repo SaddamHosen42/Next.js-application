@@ -2,13 +2,18 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProductsFilter from '@/components/ProductsFilter';
 import ProductsGrid from '@/components/ProductsGrid';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ProductsPage() {
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -98,14 +103,28 @@ export default function ProductsPage() {
         {/* Header */}
         <div className="bg-white border-b">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="text-center">
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                Our Products
-              </h1>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Discover our complete collection of tech products. 
-                Use the filters below to find exactly what you&apos;re looking for.
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-center sm:text-left mb-6 sm:mb-0">
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                  Our Products
+                </h1>
+                <p className="text-lg text-gray-600 max-w-2xl">
+                  Discover our complete collection of tech products. 
+                  Use the filters below to find exactly what you&apos;re looking for.
+                </p>
+              </div>
+              
+              {/* Add Product Button - Only show for authenticated users */}
+              {session && (
+                <div className="flex justify-center sm:justify-end">
+                  <Link href="/products/add">
+                    <Button className="inline-flex items-center">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Product
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
