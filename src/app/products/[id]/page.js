@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
@@ -21,12 +21,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { 
-  Star, 
-  Heart, 
-  Share2, 
-  ShoppingCart, 
-  Plus, 
+import {
+  Star,
+  Heart,
+  Share2,
+  ShoppingCart,
+  Plus,
   Minus,
   ArrowLeft,
   CheckCircle,
@@ -35,24 +35,29 @@ import {
 import { toast } from 'sonner';
 
 export default function ProductDetailsPage({ params }) {
+  // Unwrap the params Promise using React.use()
+  const resolvedParams = use(params);
+  const productId = resolvedParams.id;
+  
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  console.log(productId);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/products/${params.id}`);
-        
+        const response = await fetch(`/api/products/${productId}`);
+
         if (!response.ok) {
           if (response.status === 404) {
             notFound();
           }
           throw new Error('Failed to fetch product');
         }
-        
+
         const data = await response.json();
         setProduct(data.product);
         setRelatedProducts(data.relatedProducts);
@@ -65,7 +70,7 @@ export default function ProductDetailsPage({ params }) {
     };
 
     fetchProduct();
-  }, [params.id]);
+  }, [productId]);
 
   const handleQuantityChange = (change) => {
     setQuantity(prev => Math.max(1, prev + change));
@@ -132,7 +137,7 @@ export default function ProductDetailsPage({ params }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
+
       <main className="flex-1 bg-gray-50">
         {/* Breadcrumb */}
         <div className="bg-white border-b">
@@ -179,18 +184,18 @@ export default function ProductDetailsPage({ params }) {
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   {product.name}
                 </h1>
-                
+
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="flex items-center space-x-1">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`h-4 w-4 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                      <Star
+                        key={i}
+                        className={`h-4 w-4 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
                       />
                     ))}
                     <span className="text-sm text-gray-600 ml-2">(4.0) · 124 reviews</span>
                   </div>
-                  
+
                   {product.featured && (
                     <Badge className="bg-blue-600">
                       <Star className="h-3 w-3 mr-1 fill-current" />
@@ -246,14 +251,14 @@ export default function ProductDetailsPage({ params }) {
                     </div>
 
                     <div className="flex space-x-3">
-                      <Button 
+                      <Button
                         className="flex-1 flex items-center space-x-2"
                         onClick={handleAddToCart}
                       >
                         <ShoppingCart className="h-4 w-4" />
                         <span>Add to Cart</span>
                       </Button>
-                      
+
                       <Button
                         variant="outline"
                         size="icon"
@@ -262,7 +267,7 @@ export default function ProductDetailsPage({ params }) {
                       >
                         <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-current' : ''}`} />
                       </Button>
-                      
+
                       <Button variant="outline" size="icon" onClick={handleShare}>
                         <Share2 className="h-4 w-4" />
                       </Button>
@@ -291,9 +296,9 @@ export default function ProductDetailsPage({ params }) {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {relatedProducts.map((relatedProduct) => (
-                  <ProductCard 
-                    key={relatedProduct.id} 
-                    product={relatedProduct} 
+                  <ProductCard
+                    key={relatedProduct.id}
+                    product={relatedProduct}
                     showFeaturedBadge={true}
                   />
                 ))}

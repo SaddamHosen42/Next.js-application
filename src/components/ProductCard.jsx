@@ -45,7 +45,8 @@ export default function ProductCard({ product, showFeaturedBadge = false }) {
           </div>
         </div>
       </CardContent>
-      
+    
+
       <CardFooter className="p-6 pt-0">
         <Link href={`/products/${product.id}`} className="w-full">
           <Button variant="outline" className="w-full group-hover:bg-blue-50 group-hover:border-blue-200 transition-colors">

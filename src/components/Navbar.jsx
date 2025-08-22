@@ -38,7 +38,7 @@ export default function Navbar() {
             </Link>
             {session && (
               <Link 
-                href="/dashboard/add-product" 
+                href="/products/add" 
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Add Product
