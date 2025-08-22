@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { ShoppingBag, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
 // Validation schema
 const registerSchema = z.object({
@@ -27,6 +28,8 @@ const registerSchema = z.object({
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
   const form = useForm({
@@ -78,13 +81,23 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center space-x-2 mb-6">
+            <ShoppingBag className="h-8 w-8 text-blue-600" />
+            <span className="text-2xl font-bold text-gray-900">TechStore</span>
+          </Link>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Create your account</h1>
+          <p className="text-gray-600">Enter your information to get started</p>
+        </div>
+
         <Card>
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
-            <CardDescription className="text-center">
-              Enter your information to create your account
+          <CardHeader>
+            <CardTitle>Sign Up</CardTitle>
+            <CardDescription>
+              Create your account to start shopping
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -97,11 +110,15 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Enter your full name" 
-                          {...field}
-                          disabled={isLoading}
-                        />
+                        <div className="relative">
+                          <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input 
+                            placeholder="Enter your full name" 
+                            {...field}
+                            disabled={isLoading}
+                            className="pl-10"
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -115,12 +132,16 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="email"
-                          placeholder="Enter your email" 
-                          {...field}
-                          disabled={isLoading}
-                        />
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input 
+                            type="email"
+                            placeholder="Enter your email" 
+                            {...field}
+                            disabled={isLoading}
+                            className="pl-10"
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -134,12 +155,23 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="password"
-                          placeholder="Create a password" 
-                          {...field}
-                          disabled={isLoading}
-                        />
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input 
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Create a password" 
+                            {...field}
+                            disabled={isLoading}
+                            className="pl-10 pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -153,12 +185,23 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="password"
-                          placeholder="Confirm your password" 
-                          {...field}
-                          disabled={isLoading}
-                        />
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input 
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            placeholder="Confirm your password" 
+                            {...field}
+                            disabled={isLoading}
+                            className="pl-10 pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                          >
+                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -175,15 +218,23 @@ export default function RegisterPage() {
               </form>
             </Form>
           </CardContent>
-          <CardFooter>
-            <div className="text-center text-sm text-gray-600 w-full">
-              Already have an account?{' '}
-              <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                Sign in
-              </Link>
-            </div>
-          </CardFooter>
         </Card>
+
+        {/* Footer */}
+        <div className="text-center mt-6">
+          <p className="text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link 
+              href="/login"
+              className="text-blue-600 hover:underline font-medium"
+            >
+              Sign in
+            </Link>
+          </p>
+          <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 mt-2 inline-block">
+            ← Back to Home
+          </Link>
+        </div>
       </div>
     </div>
   );

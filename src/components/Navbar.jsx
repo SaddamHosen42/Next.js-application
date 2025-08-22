@@ -36,14 +36,14 @@ export default function Navbar() {
             >
               Products
             </Link>
-            {session && (
+            
               <Link 
                 href="/products/add" 
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Add Product
               </Link>
-            )}
+           
           </div>
 
           {/* Auth Buttons */}

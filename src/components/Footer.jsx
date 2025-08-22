@@ -21,15 +21,15 @@ export default function Footer() {
             <div className="space-y-2">
               <div className="flex items-center space-x-2 text-gray-400">
                 <MapPin className="h-4 w-4" />
-                <span>123 Tech Street, Digital City, DC 12345</span>
+                <span>123 Tech Street, Dinajpur, Bangladesh</span>
               </div>
               <div className="flex items-center space-x-2 text-gray-400">
                 <Phone className="h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+880 1627482575</span>
               </div>
               <div className="flex items-center space-x-2 text-gray-400">
                 <Mail className="h-4 w-4" />
-                <span>contact@techstore.com</span>
+                <span>saddamhosen1433@gmail.com</span>
               </div>
             </div>
           </div>
