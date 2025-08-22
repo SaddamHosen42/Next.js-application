@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
@@ -41,7 +41,14 @@ export default function AddProductPage() {
     },
   });
 
-  // Redirect if not authenticated
+  // Handle authentication redirect
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
+
+  // Show loading state
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -53,8 +60,8 @@ export default function AddProductPage() {
     );
   }
 
+  // Show nothing while redirecting
   if (status === 'unauthenticated') {
-    router.push('/login');
     return null;
   }
 
