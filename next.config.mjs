@@ -58,6 +58,8 @@ const nextConfig = {
       },
     ],
   },
+  // External packages for server components
+  serverExternalPackages: ['mongoose'],
 };
 
 export default nextConfig;

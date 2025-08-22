@@ -2,10 +2,11 @@
 
 import ProductCard from '@/components/ProductCard';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
-export default function ProductHighlights({ products = [] }) {
+export default function ProductHighlights({ products = [], isLoading = false }) {
   // Get featured products or first 6 products
   const highlightedProducts = products.filter(product => product.featured).slice(0, 6);
 
@@ -21,7 +22,18 @@ export default function ProductHighlights({ products = [] }) {
           </p>
         </div>
         
-        {highlightedProducts.length > 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="space-y-4">
+                <Skeleton className="aspect-square w-full rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-6 w-1/4" />
+              </div>
+            ))}
+          </div>
+        ) : highlightedProducts.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {highlightedProducts.map((product) => (

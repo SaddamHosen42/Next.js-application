@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Product from '@/lib/models/Product';
-import products from '@/lib/data/products.json';
+import User from '@/lib/models/User';
 
 export async function GET(request) {
   try {
@@ -12,107 +12,86 @@ export async function GET(request) {
     const maxPrice = searchParams.get('maxPrice');
     const sort = searchParams.get('sort');
 
-    // Get products from JSON file
-    let jsonProducts = [...products];
+    // Connect to MongoDB
+    await connectDB();
 
-    // Get products from MongoDB
-    let dbProducts = [];
-    try {
-      await connectDB();
-      const mongoProducts = await Product.find({ inStock: true })
-        .populate('createdBy', 'name email')
-        .sort({ createdAt: -1 });
-      
-      dbProducts = mongoProducts.map(product => ({
-        id: product._id.toString(),
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        image: product.image,
-        category: product.category,
-        brand: product.brand,
-        featured: product.featured,
-        inStock: product.inStock,
-        stockQuantity: product.stockQuantity,
-        rating: product.rating,
-        reviewCount: product.reviewCount,
-        createdBy: product.createdBy?.name || 'User',
-        createdAt: product.createdAt,
-      }));
-    } catch (error) {
-      console.error('Error fetching MongoDB products:', error);
-      // Continue with just JSON products if MongoDB fails
-    }
-
-    // Combine both product sources
-    let allProducts = [...jsonProducts, ...dbProducts];
+    // Build query object - Remove inStock filter to show all products
+    let query = {};
 
     // Search filter
     if (search) {
       const searchTerm = search.toLowerCase();
-      allProducts = allProducts.filter(product =>
-        product.name.toLowerCase().includes(searchTerm) ||
-        product.description.toLowerCase().includes(searchTerm)
-      );
+      query.$or = [
+        { name: { $regex: searchTerm, $options: 'i' } },
+        { description: { $regex: searchTerm, $options: 'i' } }
+      ];
     }
 
     // Category filter
     if (category) {
-      allProducts = allProducts.filter(product => 
-        product.category === category
-      );
+      query.category = category;
     }
 
     // Price range filter
     if (minPrice) {
-      allProducts = allProducts.filter(product => 
-        product.price >= parseFloat(minPrice)
-      );
+      query.price = { ...query.price, $gte: parseFloat(minPrice) };
     }
 
     if (maxPrice) {
-      allProducts = allProducts.filter(product => 
-        product.price <= parseFloat(maxPrice)
-      );
+      query.price = { ...query.price, $lte: parseFloat(maxPrice) };
     }
 
-    // Sort products
+    // Build sort object
+    let sortObject = {};
     if (sort) {
       switch (sort) {
         case 'price-low':
-          allProducts.sort((a, b) => a.price - b.price);
+          sortObject = { price: 1 };
           break;
         case 'price-high':
-          allProducts.sort((a, b) => b.price - a.price);
+          sortObject = { price: -1 };
           break;
         case 'name':
-          allProducts.sort((a, b) => a.name.localeCompare(b.name));
+          sortObject = { name: 1 };
           break;
         case 'newest':
-          allProducts.sort((a, b) => {
-            const dateA = new Date(a.createdAt || 0);
-            const dateB = new Date(b.createdAt || 0);
-            return dateB - dateA;
-          });
+          sortObject = { createdAt: -1 };
           break;
         default:
           // Default order - featured first, then newest
-          allProducts.sort((a, b) => {
-            if (a.featured && !b.featured) return -1;
-            if (!a.featured && b.featured) return 1;
-            const dateA = new Date(a.createdAt || 0);
-            const dateB = new Date(b.createdAt || 0);
-            return dateB - dateA;
-          });
+          sortObject = { featured: -1, createdAt: -1 };
           break;
       }
+    } else {
+      // Default order - featured first, then newest
+      sortObject = { featured: -1, createdAt: -1 };
     }
 
+    // Fetch products from MongoDB
+    const mongoProducts = await Product.find(query)
+      .sort(sortObject)
+      .lean(); // Use lean() for better performance
+    
+    const products = mongoProducts.map(product => ({
+      id: product._id.toString(),
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      image: product.image,
+      category: product.category || 'other',
+      brand: product.brand || '',
+      featured: product.featured || false,
+      inStock: product.inStock !== false, // Default to true if not specified
+      stockQuantity: product.stockQuantity || 0,
+      rating: product.rating || 0,
+      reviewCount: product.reviewCount || 0,
+      createdBy: 'Admin', // Default value since manually added data might not have this
+      createdAt: product.createdAt || new Date(),
+    }));
+
     return NextResponse.json({
-      products: allProducts,
-      total: allProducts.length,
-      dbProductsCount: dbProducts.length,
-      jsonProductsCount: jsonProducts.length,
+      products: products,
+      total: products.length,
       filters: {
         search,
         category,
