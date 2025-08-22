@@ -2,6 +2,14 @@
 
 A modern e-commerce web application built with Next.js 15, featuring authentication, product management, and a beautiful user interface.
 
+## 🌐 Live Demo
+
+**[🚀 View Live Application](https://techstore-swart.vercel.app/)**
+
+*Try the demo with these credentials:*
+- **Email**: `demo@example.com`
+- **Password**: `password123`
+
 ## 🚀 Project Description
 
 TechStore is a full-stack e-commerce application that allows users to browse products, register/login, and manage product listings. The application features:
@@ -139,6 +147,8 @@ For testing purposes, use these demo credentials:
 - **Password**: `password123`
 
 ## 🚀 Deployment
+
+**Live Application**: [https://techstore-swart.vercel.app/](https://techstore-swart.vercel.app/)
 
 The application can be deployed on various platforms:
 
