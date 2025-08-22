@@ -43,7 +43,7 @@ export async function GET(request) {
 
     // Build sort object
     let sortObject = {};
-    if (sort) {
+    if (sort && sort !== 'default') {
       switch (sort) {
         case 'price-low':
           sortObject = { price: 1 };

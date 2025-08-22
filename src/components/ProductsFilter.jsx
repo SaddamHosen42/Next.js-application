@@ -29,7 +29,8 @@ export default function ProductsFilter({
   };
 
   const clearFilter = (key) => {
-    const newFilters = { ...localFilters, [key]: '' };
+    const defaultValue = key === 'sort' ? 'default' : '';
+    const newFilters = { ...localFilters, [key]: defaultValue };
     setLocalFilters(newFilters);
     onFiltersChange(newFilters);
   };
@@ -39,13 +40,15 @@ export default function ProductsFilter({
       search: '',
       minPrice: '',
       maxPrice: '',
-      sort: ''
+      sort: 'default'
     };
     setLocalFilters(clearedFilters);
     onFiltersChange(clearedFilters);
   };
 
-  const hasActiveFilters = Object.values(localFilters).some(value => value && value !== '');
+  const hasActiveFilters = Object.entries(localFilters).some(([key, value]) => 
+    value && value !== '' && !(key === 'sort' && value === 'default')
+  );
 
   return (
     <div className="space-y-6">
@@ -73,7 +76,9 @@ export default function ProductsFilter({
             <span>Filters</span>
             {hasActiveFilters && (
               <Badge variant="secondary" className="ml-2">
-                {Object.values(localFilters).filter(v => v && v !== '').length}
+                {Object.entries(localFilters).filter(([key, value]) => 
+                  value && value !== '' && !(key === 'sort' && value === 'default')
+                ).length}
               </Badge>
             )}
           </Button>
@@ -126,7 +131,7 @@ export default function ProductsFilter({
               </button>
             </Badge>
           )}
-          {localFilters.sort && (
+          {localFilters.sort && localFilters.sort !== 'default' && (
             <Badge variant="secondary" className="flex items-center space-x-1">
               <span>Sort: {localFilters.sort}</span>
               <button onClick={() => clearFilter('sort')}>
@@ -177,7 +182,7 @@ export default function ProductsFilter({
                     <SelectValue placeholder="Sort by..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Default</SelectItem>
+                    <SelectItem value="default">Default</SelectItem>
                     <SelectItem value="name">Name (A-Z)</SelectItem>
                     <SelectItem value="price-low">Price (Low to High)</SelectItem>
                     <SelectItem value="price-high">Price (High to Low)</SelectItem>

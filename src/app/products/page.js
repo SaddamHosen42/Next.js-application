@@ -27,7 +27,7 @@ export default function ProductsPage() {
     search: searchParams.get('search') || '',
     minPrice: searchParams.get('minPrice') || '',
     maxPrice: searchParams.get('maxPrice') || '',
-    sort: searchParams.get('sort') || ''
+    sort: searchParams.get('sort') || 'default'
   });
 
   // Fetch products function
@@ -37,7 +37,7 @@ export default function ProductsPage() {
       const queryParams = new URLSearchParams();
       
       Object.entries(currentFilters).forEach(([key, value]) => {
-        if (value && value !== '') {
+        if (value && value !== '' && !(key === 'sort' && value === 'default')) {
           queryParams.append(key, value);
         }
       });
@@ -64,7 +64,7 @@ export default function ProductsPage() {
     const params = new URLSearchParams();
     
     Object.entries(newFilters).forEach(([key, value]) => {
-      if (value && value !== '') {
+      if (value && value !== '' && !(key === 'sort' && value === 'default')) {
         params.set(key, value);
       }
     });
@@ -88,7 +88,7 @@ export default function ProductsPage() {
       search: searchParams.get('search') || '',
       minPrice: searchParams.get('minPrice') || '',
       maxPrice: searchParams.get('maxPrice') || '',
-      sort: searchParams.get('sort') || ''
+      sort: searchParams.get('sort') || 'default'
     };
     
     setFilters(urlFilters);
